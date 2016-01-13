@@ -18,7 +18,7 @@ command :info do |c|
     Zip::File.open(@file) do |zipfile|
       app_entry = zipfile.find_entry("Payload/#{File.basename(@file, File.extname(@file))}.app")
       provisioning_profile_entry = zipfile.find_entry("#{app_entry.name}embedded.mobileprovision") if app_entry
-      
+
       if (!provisioning_profile_entry)
         zipfile.dir.entries("Payload").each do |dir_entry|
           if dir_entry =~ /.app$/
@@ -44,7 +44,7 @@ command :info do |c|
         temp_provisioning_profile = ::File.new(::File.join(tempdir.path, provisioning_profile_entry.name))
         temp_app_directory = ::File.new(::File.join(tempdir.path, app_entry.name))
 
-        plist = Plist::parse_xml(`security cms -D -i #{temp_provisioning_profile.path}`)
+        plist = Plist::parse_xml(`security cms -D -i \"#{temp_provisioning_profile.path}\"`)
 
         codesign = `codesign -dv "#{temp_app_directory.path}" 2>&1`
         codesigned = /Signed Time/ === codesign
